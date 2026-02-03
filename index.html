@@ -110,7 +110,14 @@
           body: JSON.stringify({ name, email, password })
         });
 
-        const data = await res.json();
+        let data;
+
+try {
+  data = await res.json();
+} catch {
+  throw new Error("Invalid JSON from server");
+}
+
 
         if (data.success) {
           msg.textContent = "✅ Signup successful! Redirecting...";
@@ -134,3 +141,45 @@
 
 </body>
 </html>
+<section class="container">
+
+  <!-- LEFT -->
+  <div class="panel chemicals">
+    <h3>🧪 Chemicals Involved</h3>
+    <div class="chemical"><span>⚛️</span><div><strong>Sodium (Na)</strong></div></div>
+    <div class="chemical"><span>💧</span><div><strong>Water (H₂O)</strong></div></div>
+    <div class="chemical"><span>🔥</span><div><strong>Hydrogen (H₂)</strong></div></div>
+    <div class="chemical"><span>🧪</span><div><strong>Hydrochloric Acid (HCl)</strong></div></div>
+    <div class="chemical"><span>🧊</span><div><strong>Oxygen (O₂)</strong></div></div>
+    <div class="chemical"><span>⚡</span><div><strong>Energy / Heat</strong></div></div>
+  </div>
+
+  <!-- CENTER -->
+  <div class="panel">
+    <h2>🎬 Reaction Visualization</h2>
+
+    <div class="stage" id="stage">
+      <video id="video" muted>
+        <source src="reaction.mp4" type="video/mp4">
+      </video>
+      <canvas id="canvas"></canvas>
+    </div>
+
+    <button onclick="startReaction()">▶ Initiate Reaction</button>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="panel description">
+    <h3>🔬 Reaction Details</h3>
+    <p>
+      Sodium reacts violently with water, rapidly releasing energy.
+      This causes hydrogen gas to escape and ignite.
+    </p>
+    <p>
+      The animation represents energy waves, heat, and molecular
+      motion layered over the real reaction video.
+    </p>
+    <p><strong>Equation:</strong><br>
+      2Na + 2H₂O → 2NaOH + H₂ + Heat 🔥
+    </p>
+  </div>
