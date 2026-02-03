@@ -88,6 +88,8 @@
   </div>
 
   <script>
+    const BACKEND_URL = "https://reaction-with-chemical.onrender.com";
+
     document.getElementById("signupForm").addEventListener("submit", async (e) => {
       e.preventDefault();
 
@@ -100,7 +102,7 @@
       msg.style.color = "#00f2ff";
 
       try {
-        const res = await fetch("/signup", {
+        const res = await fetch(`${BACKEND_URL}/signup`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -111,24 +113,23 @@
         const data = await res.json();
 
         if (data.success) {
-  msg.textContent = "✅ Signup successful! Redirecting...";
-  msg.style.color = "#4cff6a";
+          msg.textContent = "✅ Signup successful! Redirecting...";
+          msg.style.color = "#4cff6a";
 
-  setTimeout(() => {
-    window.location.href = "/reaction";
-  }, 1500);
-}
- else {
+          setTimeout(() => {
+            window.location.href = `${BACKEND_URL}/reaction`;
+          }, 1500);
+        } else {
           msg.textContent = "❌ Signup failed";
           msg.style.color = "red";
         }
 
       } catch (err) {
+        console.error(err);
         msg.textContent = "❌ Server not responding";
         msg.style.color = "red";
       }
     });
-    
   </script>
 
 </body>
