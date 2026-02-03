@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Chemical Reaction Live Exhibit</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root {
+  --accent: #00f2ff;
+  --dark: #050814;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Segoe UI, sans-serif;
+}
+
+body {
+  background: radial-gradient(circle at top, #121a44, var(--dark));
+  color: #fff;
+}
+
+/* HEADER */
+header {
+  text-align: center;
+  padding: 30px;
+}
+
+header h1 {
+  font-size: 2.7rem;
+  color: var(--accent);
+  text-shadow: 0 0 35px rgba(0,242,255,.8);
+}
+
+/* LAYOUT */
+.lab {
+  display: grid;
+  grid-template-columns: 1fr 1.8fr 1fr;
+  gap: 20px;
+  padding: 20px;
+}
+
+/* PANELS */
+.panel {
+  background: linear-gradient(145deg, #12214d, #0a1330);
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 25px 60px rgba(0,0,0,.7);
+}
+
+/* CHEMICAL LIST */
+.chemical {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.chemical span {
+  font-size: 2.8rem;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+/* STAGE */
+.stage {
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 0 45px rgba(0,242,255,.7);
+}
+
+video {
+  width: 100%;
+  filter: brightness(.85);
+  transition: 1s ease;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.stage.active video {
+  filter: brightness(1.25);
+  transform: scale(1.04);
+}
+
+/* BUTTON */
+button {
+  margin-top: 15px;
+  width: 100%;
+  padding: 16px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  background: linear-gradient(135deg, #00f2ff, #0077ff);
+  transition: .4s;
+}
+
+button:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 40px rgba(0,242,255,.9);
+}
+
+/* DESCRIPTION */
+.description h3 {
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+
+.description p {
+  line-height: 1.6;
+  opacity: .9;
+}
+
+/* FOOTER */
+footer {
+  text-align: center;
+  padding: 15px;
+  opacity: .7;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🧪 Advanced Chemical Reaction Exhibit</h1>
+  <p>Animated reactions • Real visuals • Interactive science</p>
+</header>
+
+<section class="lab">
+
+  <!-- LEFT: CHEMICALS -->
+  <div class="panel">
+    <h2>⚗️ Reactants</h2>
+
+    <div class="chemical"><span>🧂</span><div><strong>Sodium (Na)</strong></div></div>
+    <div class="chemical"><span>💧</span><div><strong>Water (H₂O)</strong></div></div>
+    <div class="chemical"><span>🔥</span><div><strong>Hydrogen (H₂)</strong></div></div>
+    <div class="chemical"><span>🧪</span><div><strong>Hydrochloric Acid (HCl)</strong></div></div>
+    <div class="chemical"><span>🧊</span><div><strong>Oxygen (O₂)</strong></div></div>
+    <div class="chemical"><span>⚡</span><div><strong>Energy / Heat</strong></div></div>
+  </div>
+
+  <!-- CENTER -->
+  <div class="panel">
+    <h2>🎬 Reaction Visualization</h2>
+
+    <div class="stage" id="stage">
+      <video id="video" muted>
+        <source src="reaction.mp4" type="video/mp4">
+      </video>
+      <canvas id="canvas"></canvas>
+    </div>
+
+    <button onclick="startReaction()">▶ Initiate Reaction</button>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="panel description">
+    <h3>🔬 Reaction Details</h3>
+    <p>
+      Sodium reacts violently with water, rapidly releasing energy.
+      This causes hydrogen gas to escape and ignite.
+    </p>
+    <p>
+      The animation represents energy waves, heat, and molecular
+      motion layered over the real reaction video.
+    </p>
+    <p><strong>Equation:</strong><br>
+      2Na + 2H₂O → 2NaOH + H₂ + Heat 🔥
+    </p>
+  </div>
+
+</section>
+
+<footer>
+  Interactive Science Exhibit • Educational & Visual Learning
+</footer>
+
+<script>
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+const stage = document.getElementById("stage");
+const video = document.getElementById("video");
+
+function resize() {
+  canvas.width = stage.clientWidth;
+  canvas.height = stage.clientHeight;
+}
+resize();
+window.addEventListener("resize", resize);
+
+let particles = [];
+
+function spawnParticle(x, y, color) {
+  particles.push({
+    x, y,
+    r: Math.random()*5 + 2,
+    vx: (Math.random()-0.5)*6,
+    vy: (Math.random()-0.5)*6,
+    life: 120,
+    color
+  });
+}
+
+function animate() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  particles.forEach(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.life--;
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+    ctx.fillStyle = p.color;
+    ctx.fill();
+  });
+
+  particles = particles.filter(p => p.life > 0);
+
+  // Ambient particles
+  if (Math.random() < 0.15) {
+    spawnParticle(
+      canvas.width/2,
+      canvas.height/2,
+      "rgba(0,200,255,0.6)"
+    );
+  }
+
+  requestAnimationFrame(animate);
+}
+animate();
+
+function startReaction() {
+  stage.classList.add("active");
+  video.currentTime = 0;
+  video.play();
+
+  for (let i = 0; i < 200; i++) {
+    spawnParticle(
+      canvas.width/2,
+      canvas.height/2,
+      "rgba(255,180,50,0.9)"
+    );
+  }
+}
+</script>
+
+</body>
+</html>
