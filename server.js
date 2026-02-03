@@ -1,35 +1,35 @@
-const express = require('express');
-const cors = require('cors');
-const path = require('path');
+const express = require("express");
+const cors = require("cors");
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: "*",   // allow Netlify
+  methods: ["GET", "POST"]
+}));
+
 app.use(express.json());
-app.use(express.static(__dirname));
 
-// Signup page
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-// Reaction page
-app.get('/reaction', (req, res) => {
-  res.sendFile(path.join(__dirname, 'reaction.html'));
+// Health check (IMPORTANT)
+app.get("/", (req, res) => {
+  res.send("Backend is running ✅");
 });
 
 // Signup API
-app.post('/signup', (req, res) => {
+app.post("/signup", (req, res) => {
   const { name, email, password } = req.body;
 
   console.log("New user:", name, email);
 
-  // (later we’ll save to database)
   res.json({ success: true });
+});
+
+// Reaction page API (simple test)
+app.get("/reaction", (req, res) => {
+  res.send("Reaction page reached 🧪");
 });
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
